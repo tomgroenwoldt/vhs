@@ -110,7 +110,7 @@ func (vhs *VHS) Start() error {
 
 	path, _ := launcher.LookPath()
 	enableNoSandbox := os.Getenv("VHS_NO_SANDBOX") != ""
-	u, err := launcher.New().Leakless(false).Bin(path).NoSandbox(enableNoSandbox).Launch()
+	u, err := launcher.New().Leakless(false).Bin(path).Set("--use-gl").NoSandbox(enableNoSandbox).Launch()
 	if err != nil {
 		return fmt.Errorf("could not launch browser: %w", err)
 	}
@@ -141,7 +141,11 @@ func (vhs *VHS) Setup() {
 	vhs.Page = vhs.Page.MustWait("() => window.term != undefined")
 
 	// Find xterm.js canvases for the text and cursor layer for recording.
-	vhs.TextCanvas, _ = vhs.Page.Element("canvas.xterm-text-layer")
+	var canvasses, _ = vhs.Page.Elements("canvas")
+
+	// The text layer resides inside the last canvas element without a classname
+	// when using the WebGL renderer of xtermjs.
+	vhs.TextCanvas = canvasses.Last()
 	vhs.CursorCanvas, _ = vhs.Page.Element("canvas.xterm-cursor-layer")
 
 	// Apply options to the terminal

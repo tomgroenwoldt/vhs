@@ -27,17 +27,14 @@ func buildTtyCmd(port int, shell Shell) *exec.Cmd {
 	args := []string{
 		fmt.Sprintf("--port=%d", port),
 		"--interface", "127.0.0.1",
-		"-t", "rendererType=canvas",
-		"-t", "disableResizeOverlay=true",
-		"-t", "cursorBlink=true",
-		"-t", "enableSixel=true",
-		"-t", "customGlyphs=true",
 	}
 
 	args = append(args, shell.Command...)
 
 	//nolint:gosec
-	cmd := exec.Command("ttyd", args...)
+	// We use our custom fork of ttyd here which has WebGL rendering
+	// enabled.
+	cmd := exec.Command("./ttyd", args...)
 	if shell.Env != nil {
 		cmd.Env = append(shell.Env, cmd.Env...)
 	}
