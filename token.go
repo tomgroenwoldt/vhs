@@ -27,6 +27,7 @@ const (
 	EOF            = "EOF"
 	ILLEGAL        = "ILLEGAL"
 	SPACE          = "SPACE"
+	ALT            = "ALT"
 	BACKSPACE      = "BACKSPACE"
 	CTRL           = "CTRL"
 	ENTER          = "ENTER"

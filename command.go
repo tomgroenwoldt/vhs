@@ -17,6 +17,7 @@ type CommandType TokenType
 // CommandTypes is a list of the available commands that can be executed.
 var CommandTypes = []CommandType{ //nolint: deadcode
 	BACKSPACE,
+	ALT,
 	CTRL,
 	DOWN,
 	ENTER,
@@ -64,6 +65,7 @@ var CommandFuncs = map[CommandType]CommandFunc{
 	ESCAPE:    ExecuteKey(input.Escape),
 	PAGEUP:    ExecuteKey(input.PageUp),
 	PAGEDOWN:  ExecuteKey(input.PageDown),
+	ALT:       ExecuteAlt,
 	HIDE:      ExecuteHide,
 	REQUIRE:   ExecuteRequire,
 	SHOW:      ExecuteShow,
@@ -137,6 +139,16 @@ func ExecuteCtrl(c Command, v *VHS) {
 		}
 	}
 	_ = v.Page.Keyboard.Release(input.ControlLeft)
+}
+
+func ExecuteAlt(c Command, v *VHS) {
+	_ = v.Page.Keyboard.Press(input.AltLeft)
+	for _, r := range c.Args {
+		if k, ok := keymap[r]; ok {
+			_ = v.Page.Keyboard.Type(k)
+		}
+	}
+	_ = v.Page.Keyboard.Release(input.AltLeft)
 }
 
 // ExecuteHide is a CommandFunc that starts or stops the recording of the vhs.
